@@ -31,6 +31,7 @@ namespace WpfClinicalElectron
 
         private void calculateButton_Click(object sender, RoutedEventArgs e)
         {
+            string phantom_selection = ((ComboBoxItem)phantomComboBox.SelectedItem).Content.ToString();
             string circle_diameter = circleTextBox.Text;
             string selected_machine = ((ComboBoxItem)machineComboBox.SelectedItem).Content.ToString();
             string selected_energy = ((ComboBoxItem)energyComboBox.SelectedItem).Content.ToString();
@@ -40,6 +41,55 @@ namespace WpfClinicalElectron
             string selected_SSD = ssdTextBox.Text;
             string selected_dose = doseTextBox.Text;
             string selected_fractions = fractionsTextBox.Text;
+
+            double gantryAngle = 0.0;
+            bool canConvert = double.TryParse(selected_gantry_angle, out gantryAngle);
+            if (canConvert == false)
+            { 
+                if (selected_machine != "StJ_TB_3190")
+                    gantryAngle = 180.0;
+                else
+                    gantryAngle = 0.0;
+            }
+
+            double collimatorAngle = 0.0;
+            canConvert = double.TryParse(selected_collimator_angle, out collimatorAngle);
+            if (canConvert == false)
+            {
+                if (selected_machine != "StJ_TB_3190")
+                    collimatorAngle = 180.0;
+                else
+                    collimatorAngle = 0.0;
+            }
+
+            double couchAngle = 0.0;
+            canConvert = double.TryParse(selected_couch_angle, out couchAngle);
+            if (canConvert == false)
+            {
+                if (selected_machine != "StJ_TB_3190")
+                    couchAngle = 180.0;
+                else
+                    couchAngle = 0.0;
+            }
+
+            if (selected_machine != "StJ_TB_3190")
+            {
+                if (gantryAngle < 0.0 || gantryAngle >= 360.0)
+                    gantryAngle = 180.0;
+                if (collimatorAngle < 0.0 || collimatorAngle >= 360.0)
+                    collimatorAngle = 180.0;
+                if (couchAngle < 0.0 || couchAngle >=360.0)
+                    couchAngle = 180.0;
+            }
+            else
+            {
+                if (gantryAngle < 0.0 || gantryAngle >= 360.0)
+                    gantryAngle = 0.0;
+                if (collimatorAngle < 0.0 || collimatorAngle >= 360.0)
+                    collimatorAngle = 0.0;
+                if (couchAngle < 0.0 || couchAngle >= 360.0)
+                    couchAngle = 0.0;
+            }
 
             int phantom_slice_num;
             int fractions;
@@ -74,38 +124,64 @@ namespace WpfClinicalElectron
 
             phantom_slice_num = Convert.ToInt32((phantom_diameter_cm * 10.0) / 2.5);
             phantom_slice_num += 1;  // Force phantom_slice_num to be odd
-            
+
 
             StructureSet ph = patient.AddEmptyPhantom("ElectronPhantom", PatientOrientation.HeadFirstSupine, 512, 512, 600, 600, phantom_slice_num, 2.5);
 
             Structure body = ph.AddStructure("EXTERNAL", "BODY");
 
+            if (phantom_selection == "Spherical")
+            {   // sphere creation
+                int center_slice = (phantom_slice_num - 1) / 2;
+                int slice_mirror = center_slice - 1;
+                double radius = phantom_radius_mm;
+                double x_pt;
 
-            // sphere creation
-            int center_slice = (phantom_slice_num - 1) / 2;
-            int slice_mirror = center_slice - 1;
-            double radius = phantom_radius_mm;
-            double x_pt;
-
-            for (int i = center_slice; i < phantom_slice_num; i++)
-            {
-                x_pt = 2.5 * (i - center_slice);
-                if (x_pt < phantom_radius_mm)
+                for (int i = center_slice; i < phantom_slice_num; i++)
                 {
-                    radius = Math.Sqrt((phantom_radius_mm * phantom_radius_mm) - (x_pt * x_pt));
-                    if (i == center_slice)
+                    x_pt = 2.5 * (i - center_slice);
+                    if (x_pt < phantom_radius_mm)
                     {
-                        draw_circle_on_plane(body, i, radius);
-                    }
-                    else
-                    {
-                        draw_circle_on_plane(body, i, radius);
-                        draw_circle_on_plane(body, slice_mirror, radius);
-                        slice_mirror -= 1;
+                        radius = Math.Sqrt((phantom_radius_mm * phantom_radius_mm) - (x_pt * x_pt));
+                        if (i == center_slice)
+                        {
+                            draw_circle_on_plane(body, i, radius);
+                        }
+                        else
+                        {
+                            draw_circle_on_plane(body, i, radius);
+                            draw_circle_on_plane(body, slice_mirror, radius);
+                            slice_mirror -= 1;
+                        }
                     }
                 }
             }
-                
+
+            if (phantom_selection == "Cylindrical")
+            {   // cylinder creation
+                int center_slice = (phantom_slice_num - 1) / 2;
+                int slice_mirror = center_slice - 1;
+                double radius = phantom_radius_mm;
+                double x_pt;
+
+                for (int i = center_slice; i < phantom_slice_num; i++)
+                {
+                    x_pt = 2.5 * (i - center_slice);
+                    if (x_pt < phantom_radius_mm)
+                    {
+                        if (i == center_slice)
+                        {
+                            draw_circle_on_plane(body, i, radius);
+                        }
+                        else
+                        {
+                            draw_circle_on_plane(body, i, radius);
+                            draw_circle_on_plane(body, slice_mirror, radius);
+                            slice_mirror -= 1;
+                        }
+                    }
+                }
+            }
 
             Course course = patient.AddCourse();
             course.Id = "Clinical Setup";
@@ -115,10 +191,13 @@ namespace WpfClinicalElectron
 
             ExternalBeamMachineParameters machine_parameters = new ExternalBeamMachineParameters(selected_machine, selected_energy, 600, "STATIC", null);
             VRect<double> jawPositions = new VRect<double>(-100, -100, 100, 100);
-            double gantryAngle = Convert.ToDouble(selected_gantry_angle);
-            double collimatorAngle = Convert.ToDouble(selected_collimator_angle);
-            double couchAngle = Convert.ToDouble(selected_couch_angle);
 
+            if (selected_machine != "StJ_TB_3190")
+            { 
+                gantryAngle = varian_angle_to_iec_angle(gantryAngle);
+                collimatorAngle = varian_angle_to_iec_angle(collimatorAngle);
+                couchAngle = varian_angle_to_iec_angle(couchAngle);
+            }
 
             VVector iso_body = body.CenterPoint;
             VVector isocenter = new VVector(iso_body.x, iso_body.y, iso_body.z);
@@ -139,8 +218,21 @@ namespace WpfClinicalElectron
 
             Beam beam = electron_plan.AddStaticBeam(machine_parameters, jawPositions, collimatorAngle, gantryAngle, couchAngle, isocenter);
 
-            MessageBox.Show("Done!");
+            MessageBox.Show("Finished!");
+        }
 
+        double varian_angle_to_iec_angle(double angle_varian)
+        {
+            double angle_temp, angle_iec;
+
+            angle_temp = angle_varian - 180.0;
+
+            if (angle_temp <= 0.0)
+                angle_iec = Math.Abs(angle_temp);
+            else
+                angle_iec = 540.0 - angle_varian;
+
+            return angle_iec;
         }
 
         double degreesToradians(double degrees)

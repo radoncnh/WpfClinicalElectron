@@ -23,18 +23,25 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-            <Label Grid.Row="0" Grid.Column="0" Content="Machine" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
-        <ComboBox x:Name="machineComboBox" Grid.Row="0" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" >
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Phantom Type" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <ComboBox x:Name="phantomComboBox" Grid.Row="0" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" >
+            <ComboBoxItem Content="Cylindrical" HorizontalAlignment="Center" FontSize="15"/>
+            <ComboBoxItem Content="Spherical" HorizontalAlignment="Center" FontSize="15"/>
+        </ComboBox>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Machine" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <ComboBox x:Name="machineComboBox" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" >
             <ComboBoxItem Content="HD Trilogy" HorizontalAlignment="Center" FontSize="15"/>
             <ComboBoxItem Content="10 MV" HorizontalAlignment="Center" FontSize="15"/>
             <ComboBoxItem Content="St-J(10 MV)" HorizontalAlignment="Center" FontSize="15"/>
             <ComboBoxItem Content="StJ_TB_3190" HorizontalAlignment="Center" FontSize="15"/>
         </ComboBox>
 
-        <Label Grid.Row="1" Grid.Column="0" Content="Electron Energy" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"  Margin="5,5,5,5"/>
-        <ComboBox x:Name="energyComboBox" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" >
+        <Label Grid.Row="2" Grid.Column="0" Content="Electron Energy" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"  Margin="5,5,5,5"/>
+        <ComboBox x:Name="energyComboBox" Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" >
             <ComboBoxItem Content="6E" HorizontalAlignment="Center" FontSize="15" />
             <ComboBoxItem Content="9E" HorizontalAlignment="Center" FontSize="15"/>
             <ComboBoxItem Content="12E" HorizontalAlignment="Center" FontSize="15" />
@@ -42,28 +49,28 @@
             <ComboBoxItem Content="18E" HorizontalAlignment="Center" FontSize="15"/>
         </ComboBox>
 
-        <Label Grid.Row="2" Grid.Column="0" Content="Gantry Angle in IEC" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
-        <TextBox x:Name="gantryangleTextBox" Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
+        <Label Grid.Row="3" Grid.Column="0" Content="Gantry Angle" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <TextBox x:Name="gantryangleTextBox" Grid.Row="3" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
 
-        <Label Grid.Row="3" Grid.Column="0" Content="Collimator Angle in IEC" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
-        <TextBox x:Name="collimatorangleTextBox" Grid.Row="3" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
+        <Label Grid.Row="4" Grid.Column="0" Content="Collimator Angle" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <TextBox x:Name="collimatorangleTextBox" Grid.Row="4" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
 
-        <Label Grid.Row="4" Grid.Column="0" Content="Couch Angle in IEC" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
-        <TextBox x:Name="couchangleTextBox" Grid.Row="4" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
+        <Label Grid.Row="5" Grid.Column="0" Content="Couch Angle" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <TextBox x:Name="couchangleTextBox" Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
 
-        <Label Grid.Row="5" Grid.Column="0" Content="Diameter of Phantom Sphere in cm (10-50)" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
-        <TextBox x:Name="circleTextBox" Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
+        <Label Grid.Row="6" Grid.Column="0" Content="Diameter of Phantom Sphere in cm (10-50)" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <TextBox x:Name="circleTextBox" Grid.Row="6" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
 
-        <Label Grid.Row="6" Grid.Column="0" Content="SSD in cm (90-110)" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
-        <TextBox x:Name="ssdTextBox" Grid.Row="6" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
+        <Label Grid.Row="7" Grid.Column="0" Content="SSD in cm (90-110)" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <TextBox x:Name="ssdTextBox" Grid.Row="7" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
 
-        <Label Grid.Row="7" Grid.Column="0" Content="Dose per fraction (cGy)" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
-        <TextBox x:Name="doseTextBox" Grid.Row="7" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
+        <Label Grid.Row="8" Grid.Column="0" Content="Dose per fraction (cGy)" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <TextBox x:Name="doseTextBox" Grid.Row="8" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
 
-        <Label Grid.Row="8" Grid.Column="0" Content="Number of fractions" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
-        <TextBox x:Name="fractionsTextBox" Grid.Row="8" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
+        <Label Grid.Row="9" Grid.Column="0" Content="Number of fractions" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Margin="5,5,5,5"/>
+        <TextBox x:Name="fractionsTextBox" Grid.Row="9" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Margin="5,5,5,5" />
 
-        <Button x:Name="calculateButton" Grid.Row="9" Grid.Column="1" Content="Calculate" HorizontalAlignment="Center" Background="MistyRose" FontSize="15" Click="calculateButton_Click"  Margin="5,5,5,5" />
+        <Button x:Name="calculateButton" Grid.Row="10" Grid.Column="1" Content="Calculate" HorizontalAlignment="Center" Background="MistyRose" FontSize="15" Click="calculateButton_Click"  Margin="5,5,5,5" />
        
     </Grid>
 </UserControl>
