@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
+using progressBar;
+using System.ComponentModel;
 
 namespace WpfClinicalElectron
 {
@@ -29,7 +31,20 @@ namespace WpfClinicalElectron
 
         public Patient patient;
 
+        private static ProgressDialog pb = null;	   // Progress bar window
+
         private void calculateButton_Click(object sender, RoutedEventArgs e)
+        {
+            //Include and initalize the Progress Bar Dialog box.  The ShowDialog call starts the bar automatically.
+            pb = new ProgressDialog();                      // Create the progress bar dialog box
+            pb.SetProgressOptions(false, true);                 // Set cancellation, report-progress states (opt)
+            pb.AddDoWorkHandler(bwDoWork);                      // Add the application Do-Work handler (required)
+            //pb.AddProgressChangedHandler(bwProgressChanged);        // Add the Progress-Changed handler (if needed)
+            //pb.AddProgressCompletedHandler(bwProgressConpleted);    // Add the Progress-Completed handler (if needed)
+            pb.ShowDialog();	   	   	                // Open the dialog box and start the progress bar
+        }
+
+        void bwDoWork(object sender, DoWorkEventArgs e)
         {
             string phantom_selection = ((ComboBoxItem)phantomComboBox.SelectedItem).Content.ToString();
             string circle_diameter = circleTextBox.Text;
@@ -42,10 +57,14 @@ namespace WpfClinicalElectron
             string selected_dose = doseTextBox.Text;
             string selected_fractions = fractionsTextBox.Text;
 
+
+            // Tell the world what we're doing.
+            pb.ChangeWindowTitle("Creating phantom slices..");
+
             double gantryAngle = 0.0;
             bool canConvert = double.TryParse(selected_gantry_angle, out gantryAngle);
             if (canConvert == false)
-            { 
+            {
                 if (selected_machine != "StJ_TB_3190")
                     gantryAngle = 180.0;
                 else
@@ -78,7 +97,7 @@ namespace WpfClinicalElectron
                     gantryAngle = 180.0;
                 if (collimatorAngle < 0.0 || collimatorAngle >= 360.0)
                     collimatorAngle = 180.0;
-                if (couchAngle < 0.0 || couchAngle >=360.0)
+                if (couchAngle < 0.0 || couchAngle >= 360.0)
                     couchAngle = 180.0;
             }
             else
@@ -130,10 +149,15 @@ namespace WpfClinicalElectron
 
             Structure body = ph.AddStructure("EXTERNAL", "BODY");
 
+            // Initialize the progress counter and percentage values.
+            int passProgress = 0;
+
             if (phantom_selection == "Spherical")
             {   // sphere creation
                 int center_slice = (phantom_slice_num - 1) / 2;
                 int slice_mirror = center_slice - 1;
+                int number_of_slices = (phantom_slice_num - center_slice) - 1;
+                int index = 0;
                 double radius = phantom_radius_mm;
                 double x_pt;
 
@@ -154,6 +178,9 @@ namespace WpfClinicalElectron
                             slice_mirror -= 1;
                         }
                     }
+                    index += 1;
+                    passProgress = (100 * index)/number_of_slices;
+                    pb.UpdateProgress(passProgress);
                 }
             }
 
@@ -161,6 +188,8 @@ namespace WpfClinicalElectron
             {   // cylinder creation
                 int center_slice = (phantom_slice_num - 1) / 2;
                 int slice_mirror = center_slice - 1;
+                int number_of_slices = (phantom_slice_num - center_slice) - 1;
+                int index = 0;
                 double radius = phantom_radius_mm;
                 double x_pt;
 
@@ -180,6 +209,9 @@ namespace WpfClinicalElectron
                             slice_mirror -= 1;
                         }
                     }
+                    index += 1;
+                    passProgress = (100 * index) / number_of_slices;
+                    pb.UpdateProgress(passProgress);
                 }
             }
 
@@ -193,7 +225,7 @@ namespace WpfClinicalElectron
             VRect<double> jawPositions = new VRect<double>(-100, -100, 100, 100);
 
             if (selected_machine != "StJ_TB_3190")
-            { 
+            {
                 gantryAngle = varian_angle_to_iec_angle(gantryAngle);
                 collimatorAngle = varian_angle_to_iec_angle(collimatorAngle);
                 couchAngle = varian_angle_to_iec_angle(couchAngle);
@@ -214,13 +246,17 @@ namespace WpfClinicalElectron
 
             isocenter_radius_mm = phantom_radius_mm + ((SSD - 100.0)) * 10.0;
             isocenter.x = isocenter_radius_mm * Math.Sin(degreesToradians(gantryAngle));
-            isocenter.y = (isocenter_radius_mm * Math.Cos(degreesToradians(gantryAngle)))*-1.0;
+            isocenter.y = (isocenter_radius_mm * Math.Cos(degreesToradians(gantryAngle))) * -1.0;
 
             Beam beam = electron_plan.AddStaticBeam(machine_parameters, jawPositions, collimatorAngle, gantryAngle, couchAngle, isocenter);
 
-            MessageBox.Show("Finished!");
+            pb.ChangeStatusMessage("Process Complete");
+            pb.UpdateProgress(100);
+
+            MessageBox.Show("Finished");
         }
 
+        // method to convert from the Varian Coordinate System to the IEC Coordinate System which Eclipse Esapi uses
         double varian_angle_to_iec_angle(double angle_varian)
         {
             double angle_temp, angle_iec;
