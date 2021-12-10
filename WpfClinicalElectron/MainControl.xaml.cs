@@ -42,20 +42,6 @@ namespace WpfClinicalElectron
             string selected_dose = doseTextBox.Text;
             string selected_fractions = fractionsTextBox.Text;
 
-            Window window = new Window()
-            {
-                Visibility = Visibility.Hidden,
-                // Just hiding the window is not sufficient, as it still temporarily pops up the first time. Therefore, make it transparent.
-                AllowsTransparency = true,
-                Background = System.Windows.Media.Brushes.Transparent,
-                WindowStyle = WindowStyle.None,
-                ShowInTaskbar = false
-            };
-
-            window.Show();
-
-            MessageBox.Show(window,"Wait for phantom to be completed ...");
-
             double gantryAngle = 0.0;
             bool canConvert = double.TryParse(selected_gantry_angle, out gantryAngle);
             if (canConvert == false)
@@ -231,8 +217,8 @@ namespace WpfClinicalElectron
             isocenter.y = (isocenter_radius_mm * Math.Cos(degreesToradians(gantryAngle)))*-1.0;
 
             Beam beam = electron_plan.AddStaticBeam(machine_parameters, jawPositions, collimatorAngle, gantryAngle, couchAngle, isocenter);
-            window.Close();
-            MessageBox.Show("Finished!");
+            
+            MessageBox.Show("Finished! ");
         }
 
         double varian_angle_to_iec_angle(double angle_varian)
